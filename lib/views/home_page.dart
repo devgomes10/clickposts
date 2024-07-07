@@ -1,7 +1,7 @@
 import 'package:clickposts/views/components/post_component.dart';
+import 'package:clickposts/views/post_form.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import '../controllers/post_controller.dart';
 import '../models/post_model.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,24 +12,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<PostModel> _posts = [];
+  final PostController postController = PostController();
+  late Future<List<PostModel>> futurePosts;
 
   @override
   void initState() {
     super.initState();
-    _fetchPosts();
-  }
-
-  Future<void> _fetchPosts() async {
-    final response = await http.get(Uri.parse('https://api.example.com/posts'));
-    if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
-      setState(() {
-        _posts = data.map((postJson) => PostModel.fromJson(postJson)).toList();
-      });
-    } else {
-      throw Exception('Failed to load posts');
-    }
+    futurePosts = postController.getPosts();
   }
 
   @override
@@ -40,14 +29,34 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Add post logic
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const PostForm(),
+            ),
+          );
         },
         child: const Icon(Icons.add),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: _posts.map((post) => PostComponent(post: post)).toList(),
-        ),
+      body: FutureBuilder<List<PostModel>>(
+        future: futurePosts,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Center(child: Text("Erro ao carregar posts"));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text("Nenhum post disponível"));
+          } else {
+            List<PostModel> posts = snapshot.data!;
+            return ListView.builder(
+              itemCount: posts.length,
+              itemBuilder: (context, index) {
+                return PostComponent(post: posts[index]);
+              },
+            );
+          }
+        },
       ),
     );
   }

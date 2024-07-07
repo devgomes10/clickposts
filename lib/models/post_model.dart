@@ -1,28 +1,23 @@
-import 'package:clickposts/models/user_model.dart';
-
 class PostModel {
-  final String id;
-  final UserModel user;
-  final String description;
-  final String? imageUrl;
-  final DateTime date;
+  final int userId;
+  final int id;
+  final String title;
+  final String body;
 
   PostModel({
+    required this.userId,
     required this.id,
-    required this.user,
-    required this.description,
-    this.imageUrl,
-    required this.date,
+    required this.title,
+    required this.body,
   });
 
   // named constructor from json for object (PostModel)
   factory PostModel.fromJson(Map<String, dynamic> json) {
     return PostModel(
       id: json['id'],
-      user: UserModel.fromJson(json['user']),
-      description: json['description'],
-      imageUrl: json['imageUrl'],
-      date: DateTime.parse(json['date']),
+      userId: json['userId'],
+      title: json['title'],
+      body: json['body'],
     );
   }
 }

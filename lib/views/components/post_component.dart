@@ -1,60 +1,78 @@
 import 'package:flutter/material.dart';
+import '../../controllers/user_controller.dart';
 import '../../models/post_model.dart';
+import '../../models/user_model.dart';
+import '../post_form.dart';
+import '../user_information.dart';
 
 class PostComponent extends StatelessWidget {
   final PostModel post;
+  final UserController userController = UserController();
 
-  const PostComponent({super.key, required this.post});
+  PostComponent({super.key, required this.post});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(
-        vertical: 8.0,
-        horizontal: 16.0,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ListTile(
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(post.user.avatarUrl),
-              ),
-              title: Text(post.user.name),
-              subtitle: Text(post.date.toIso8601String()),
-              trailing: PopupMenuButton(
-                itemBuilder: (context) => [
-                  const PopupMenuItem(
-                    value: 'edit',
-                    child: Text('Editar'),
-                  ),
-                  const PopupMenuItem(
-                    value: 'delete',
-                    child: Text('Deletar'),
-                  ),
-                ],
-                onSelected: (value) {
-                  if (value == 'edit') {
-                    // Edit post logic
-                  } else if (value == 'delete') {
-                    // Delete post logic
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PostForm(model: post),
+          ),
+        );
+      },
+      child: Card(
+        margin: const EdgeInsets.symmetric(
+          vertical: 8.0,
+          horizontal: 16.0,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FutureBuilder<UserModel>(
+                future: userController.getUserById(post.userId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return const Center(child: Text("Erro ao carregar usuário"));
+                  } else if (!snapshot.hasData) {
+                    return const Center(child: Text("Usuário não encontrado"));
+                  } else {
+                    final user = snapshot.data!;
+                    return ListTile(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UserInformation(userId: post.userId),
+                          ),
+                        );
+                      },
+                      leading: const CircleAvatar(
+                        child: Icon(Icons.person),
+                      ),
+                      title: Text(user.name),
+                      subtitle: Text(DateTime.now().toString()), // Data atual
+                    );
                   }
                 },
               ),
-            ),
-            if (post.description.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text(post.description),
+              const SizedBox(height: 8),
+              Text(
+                post.title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            if (post.imageUrl != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Image.network(post.imageUrl!),
-              ),
-          ],
+              const SizedBox(height: 8),
+              Text(post.body),
+            ],
+          ),
         ),
       ),
     );

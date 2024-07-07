@@ -11,12 +11,11 @@ ThemeData themeData = ThemeData(
     bodySmall: ThemeFonts.small,
   ),
   appBarTheme: const AppBarTheme(
-    centerTitle: true,
-    titleTextStyle: TextStyle(
-      color: ThemeColors.black,
-      fontSize: 26,
-    )
-  ),
+      centerTitle: true,
+      titleTextStyle: TextStyle(
+        color: ThemeColors.black,
+        fontSize: 26,
+      )),
 
   // Form
   inputDecorationTheme: InputDecorationTheme(
@@ -55,11 +54,19 @@ ThemeData themeData = ThemeData(
     style: TextButton.styleFrom(
       backgroundColor: ThemeColors.ghostWhite,
       textStyle: ThemeFonts.medium,
+      shape: RoundedRectangleBorder(
+        side: const BorderSide(color: ThemeColors.blue),
+        borderRadius: BorderRadius.circular(20),
+      ),
     ),
   ),
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
     elevation: 0,
     backgroundColor: ThemeColors.blue,
     foregroundColor: ThemeColors.white,
+  ),
+  cardTheme: const CardTheme(
+    color: ThemeColors.ghostWhite,
+    elevation: 5,
   ),
 );
