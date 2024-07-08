@@ -1,7 +1,9 @@
+import 'package:clickposts/views/components/show_snackbar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-import '../controllers/user_controller.dart';
 import '../controllers/post_controller.dart';
+import '../controllers/user_controller.dart';
 import '../models/post_model.dart';
 import '../models/user_model.dart';
 import 'components/show_confirmation_message.dart';
@@ -19,12 +21,9 @@ class PostForm extends StatefulWidget {
 
 class _PostFormState extends State<PostForm> {
   final UserController userController = UserController();
-  final PostController postController = PostController();
-
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _bodyController = TextEditingController();
   UserModel? _userModel;
-
   final formKey = GlobalKey<FormState>();
   final uniqueId = const Uuid().v1();
 
@@ -58,7 +57,9 @@ class _PostFormState extends State<PostForm> {
 
   @override
   Widget build(BuildContext context) {
+    final postProvider = Provider.of<PostController>(context, listen: false);
     final postModel = widget.model;
+
     return Scaffold(
       appBar: AppBar(
         title: postModel != null
@@ -72,7 +73,8 @@ class _PostFormState extends State<PostForm> {
                       context: context,
                       title: "Deseja remover o post?",
                       function: () async {
-                        await postController.deletePost(postModel.id);
+                        await postProvider.deletePost(postModel.id);
+                        Navigator.of(context).pop(true);
                         Navigator.of(context).pop(true);
                       },
                     );
@@ -142,7 +144,11 @@ class _PostFormState extends State<PostForm> {
                 const SizedBox(height: 100),
                 ElevatedButton(
                   onPressed: () {
-                    if (formKey.currentState!.validate()) {
+                    if (_userModel == null) {
+                      showSnackBar(
+                          context: context,
+                          message: "Por favor, escolha um usuário");
+                    } else if (formKey.currentState!.validate()) {
                       PostModel post = PostModel(
                         userId: _userModel?.id ?? 0,
                         id: postModel?.id ?? uniqueId.hashCode,
@@ -155,7 +161,7 @@ class _PostFormState extends State<PostForm> {
                           context: context,
                           title: "Deseja atualizar esse post?",
                           function: () async {
-                            await postController.updatePost(post);
+                            await postProvider.updatePost(post);
                             Navigator.of(context).pop(true);
                             Navigator.of(context).pop(true);
                           },
@@ -165,7 +171,7 @@ class _PostFormState extends State<PostForm> {
                           context: context,
                           title: "Deseja criar um novo post?",
                           function: () async {
-                            await postController.createPost(post);
+                            await postProvider.createPost(post);
                             Navigator.of(context).pop(true);
                             Navigator.of(context).pop(true);
                           },

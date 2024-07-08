@@ -22,7 +22,7 @@ class ShowUsersModal extends StatelessWidget {
               children: [
                 Icon(Icons.error, size: 60),
                 Text(
-                  "Opa, erro ao carregar\n os usuários",
+                  "Erro ao carregar usuários",
                   textAlign: TextAlign.center,
                 )
               ],
@@ -37,7 +37,7 @@ class ShowUsersModal extends StatelessWidget {
               children: [
                 Icon(Icons.access_time_outlined, size: 60),
                 Text(
-                  "Não há usuários no momento",
+                  "Não há usuários",
                   textAlign: TextAlign.center,
                 )
               ],

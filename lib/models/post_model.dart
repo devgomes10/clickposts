@@ -11,7 +11,6 @@ class PostModel {
     required this.body,
   });
 
-  // named constructor from json for object (PostModel)
   factory PostModel.fromJson(Map<String, dynamic> json) {
     return PostModel(
       id: json['id'],

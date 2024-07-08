@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../controllers/user_controller.dart';
 import '../../models/post_model.dart';
 import '../../models/user_model.dart';
@@ -38,7 +39,8 @@ class PostComponent extends StatelessWidget {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return const Center(child: Text("Erro ao carregar usuário"));
+                    return const Center(
+                        child: Text("Erro ao carregar usuário"));
                   } else if (!snapshot.hasData) {
                     return const Center(child: Text("Usuário não encontrado"));
                   } else {
@@ -48,7 +50,8 @@ class PostComponent extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => UserInformation(userId: post.userId),
+                            builder: (context) =>
+                                UserInformation(userId: post.userId),
                           ),
                         );
                       },
@@ -56,7 +59,8 @@ class PostComponent extends StatelessWidget {
                         child: Icon(Icons.person),
                       ),
                       title: Text(user.name),
-                      subtitle: Text(DateTime.now().toString()), // Data atual
+                      subtitle: Text(
+                          DateFormat.yMMMMd('pt_BR').format(DateTime.now())),
                     );
                   }
                 },

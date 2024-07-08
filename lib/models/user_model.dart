@@ -88,10 +88,12 @@ class UserModel {
       name: json['name'],
       username: json['username'],
       email: json['email'],
-      address: json['address'] != null ? Address.fromJson(json['address']) : null,
+      address:
+          json['address'] != null ? Address.fromJson(json['address']) : null,
       phone: json['phone'],
       website: json['website'],
-      company: json['company'] != null ? Company.fromJson(json['company']) : null,
+      company:
+          json['company'] != null ? Company.fromJson(json['company']) : null,
     );
   }
 }
